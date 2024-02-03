@@ -1,6 +1,7 @@
 "use client";
 
 import { Star } from "lucide-react";
+import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 import { Skeleton } from "~/components/ui/skeleton";
 import {
@@ -19,7 +20,10 @@ export function PlaylistPreview({
   const favouritesMutation = useFavouritesMutation();
   const isFavourite = favourites.some((f) => f.id === playlist.id);
   return (
-    <div className="relative mb-3 flex cursor-pointer overflow-hidden  rounded-lg bg-zinc-800 hover:bg-zinc-700">
+    <Link
+      className="relative mb-3 flex cursor-pointer overflow-hidden  rounded-lg bg-zinc-800 hover:bg-zinc-700"
+      href={`/${encodeURIComponent(playlist.name).replace(/%../g, "+")}-${playlist.id}`}
+    >
       <div className="h-20 w-20">
         {playlist.images[0]?.url && (
           // eslint-disable-next-line @next/next/no-img-element
@@ -60,7 +64,7 @@ export function PlaylistPreview({
           />
         )}
       </div>
-    </div>
+    </Link>
   );
 }
 export function PlaylistPreviewEmpty({ className }: { className?: string }) {
