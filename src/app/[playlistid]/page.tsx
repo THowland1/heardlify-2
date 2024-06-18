@@ -1,7 +1,5 @@
 "use client";
 
-import * as Popover from "@radix-ui/react-popover";
-import { useState } from "react";
 import { Button } from "~/components/ui/button";
 
 // import { EpochDay } from "~/lib/epoch-day";
@@ -14,6 +12,7 @@ import {
   IncorrectStage,
   SkippedStage,
 } from "./Stage";
+import { AutoComplete } from "./AutoComplete";
 
 function isSpotifyId(value: string) {
   const spotifyIdRegexp = new RegExp(
@@ -68,9 +67,6 @@ export default function PlaylistPage({
   // const gameMutation = useGameMutation({ playlistId, epochDay });
   // const stages = gameQuery.data.stages;
 
-  const [focus, setFocus] = useState(true);
-  const [value, setValue] = useState("");
-
   return (
     <div
       className="absolute inset-0 text-white"
@@ -96,7 +92,10 @@ export default function PlaylistPage({
           <div className="mx-auto w-full max-w-2xl">
             {playlist && (
               <>
-                <div className="flex flex-col">
+                <div
+                  className="flex flex-col"
+                  onClick={() => console.log(playlist.options)}
+                >
                   <SkippedStage />
                   <IncorrectStage
                     artistName="The Isley Brothers"
@@ -130,51 +129,7 @@ export default function PlaylistPage({
             <div className="mx-auto flex w-full max-w-2xl flex-col">
               <div className="h-4"></div>
 
-              <Popover.Root open={focus}>
-                <Popover.Anchor asChild>
-                  <div className="relative [--h:50px]">
-                    <input
-                      placeholder="Know it? Search for the artist / title"
-                      className="h-[--h] w-full border border-zinc-500 bg-transparent px-[--h] py-2 text-white outline-none focus-visible:border-t-0 focus-visible:border-green-700"
-                      value={value}
-                      onChange={(e) => setValue(e.target.value)}
-                      onFocus={() => {
-                        setFocus(true);
-                      }}
-                      onBlur={() => {
-                        setFocus(false);
-                      }}
-                    />
-                    <div className="absolute bottom-0 left-0 top-0 grid size-[--h] place-items-center">
-                      <HourglassIcon className="size-5 text-base leading-none text-zinc-500" />
-                    </div>
-                    <div className="absolute bottom-0 right-0 top-0 grid size-[--h] place-items-center">
-                      <button
-                        onClick={() => alert(123)}
-                        className="rounded border border-transparent outline-none focus-visible:border-green-700"
-                      >
-                        <XIcon className="size-5 text-base leading-none text-zinc-100" />
-                      </button>
-                    </div>
-                  </div>
-                </Popover.Anchor>
-                <Popover.Content
-                  side="top"
-                  className="w-screen max-w-2xl border border-b-0 border-green-700 bg-zinc-900"
-                  onOpenAutoFocus={(e) => e.preventDefault()}
-                >
-                  <div className="border-b border-b-zinc-500 px-2 py-3 text-sm text-white">
-                    Bobby Darin - Beyond the Sea
-                  </div>
-                  <div className="p-2 text-xs text-zinc-400">
-                    6 of 45 for &quot;e&quot;
-                  </div>
-                  <div className="p-2 text-xs text-zinc-400">
-                    No results for &quot;fvelrnsdflrems&quot;. Maybe it&apos;s
-                    something else...
-                  </div>
-                </Popover.Content>
-              </Popover.Root>
+              <AutoComplete options={playlist?.options ?? null} />
               <div className="h-4"></div>
               <div className="flex w-full justify-between">
                 <Button className="">SKIP (+1s)</Button>
@@ -189,44 +144,6 @@ export default function PlaylistPage({
   );
 }
 
-function HourglassIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      className={className}
-    >
-      <circle cx="11" cy="11" r="8"></circle>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-    </svg>
-  );
-}
-function XIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      className={className}
-    >
-      <line x1="18" y1="6" x2="6" y2="18"></line>
-      <line x1="6" y1="6" x2="18" y2="18"></line>
-    </svg>
-  );
-}
 function SpotifyIcon({ className }: { className?: string }) {
   return (
     <svg
