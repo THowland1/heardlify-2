@@ -1,61 +1,11 @@
 import * as Popover from "@radix-ui/react-popover";
 import { useState } from "react";
 import type { IDetailedOption } from "~/server/api/routers/playlist";
+import { getIsMatch, getMatch } from "./getMatch";
 
-const MAX_PAGE_SIZE = 150;
+const MAX_PAGE_SIZE = 6;
 
 type Match = { substr: string; isMatchedPart: boolean };
-
-function normalise(value: string): string {
-  return value.toLocaleLowerCase("en-GB");
-}
-function getIsMatch(value: string, splitQuery: string[]): boolean {
-  return splitQuery.every((query) =>
-    normalise(value).includes(normalise(query)),
-  );
-}
-
-// TODO - handle punctuation (omit in search, keep in displayed result)
-function getMatch(value: string, splitQuery: string[]): Match[] | null {
-  const ranges: { start: number; end: number }[] = [];
-
-  for (const query of splitQuery) {
-    let searchStartIndex = 0;
-    while (true) {
-      const startIndex = normalise(value).indexOf(
-        normalise(query),
-        searchStartIndex,
-      );
-
-      if (startIndex < 0) {
-        break;
-      }
-
-      const endIndex = startIndex + query.length;
-      ranges.push({ start: startIndex, end: endIndex });
-      searchStartIndex = endIndex;
-    }
-  }
-
-  const matches: Match[] = [];
-  let currentMatch: Match = { substr: "", isMatchedPart: false };
-  for (let i = 0; i < value.length; i++) {
-    const char = value[i]!;
-    const isMatchedChar = ranges.some((r) => r.start <= i && r.end > i);
-    if (currentMatch.isMatchedPart === isMatchedChar) {
-      currentMatch.substr = currentMatch.substr.concat(char);
-    } else {
-      matches.push(currentMatch);
-      currentMatch = {
-        substr: char,
-        isMatchedPart: isMatchedChar,
-      };
-    }
-  }
-  matches.push(currentMatch);
-
-  return matches;
-}
 
 function filterAndPage(
   options: IDetailedOption[] | null,
